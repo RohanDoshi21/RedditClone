@@ -1,3 +1,4 @@
+from sqlite3 import IntegrityError
 from xml.dom import ValidationErr
 from django.shortcuts import render
 from rest_framework import generics, permissions, mixins, status
@@ -6,7 +7,46 @@ from rest_framework.response import Response
 
 from posts.serializers import PostSerializer, VoteSerializer
 from .models import Post, Vote
+
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.parsers import JSONParser
+from django.http import JsonResponse
+from django.contrib.auth.models import User
+from django.db import IntegrityError
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate
 # Create your views here.
+
+
+@csrf_exempt
+def signup(request):
+    if request.method == 'POST':
+        try:
+            data = JSONParser().parse(request)
+            user = User.objects.create_user(
+                data['username'], password=data['password'])
+            user.save()
+            # creating token for a user
+            token = Token.objects.create(user=user)
+            return JsonResponse({'token': str(token)}, status=201)
+        except IntegrityError:
+            return JsonResponse({'error': 'username already exists'}, status=400)
+
+
+@csrf_exempt
+def login(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        user = authenticate(
+            username=data['username'], password=data['password'])
+        if user is None:
+            return JsonResponse({'error': 'Incorrect credentials'}, status=400)
+        else:
+            try:
+                token = Token.objects.get(user=user)
+            except:
+                token = Token.objects.create(user=user)
+            return JsonResponse({'token': str(token)}, status=201)
 
 
 class PostList(generics.ListCreateAPIView):
