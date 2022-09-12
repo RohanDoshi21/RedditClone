@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-@t9shefn@^w++%v*kf@2$w89=-&#gb9d)%(m9epjs0h($37x6x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,10 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'posts',
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'gunicorn',
 ]
 
-#enabling Token Based Authentication
+# enabling Token Based Authentication
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',

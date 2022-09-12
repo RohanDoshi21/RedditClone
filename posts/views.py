@@ -1,13 +1,9 @@
 from sqlite3 import IntegrityError
-from xml.dom import ValidationErr
-from django.shortcuts import render
 from rest_framework import generics, permissions, mixins, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-
 from posts.serializers import PostSerializer, VoteSerializer
 from .models import Post, Vote
-
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from django.http import JsonResponse
